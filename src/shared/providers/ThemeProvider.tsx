@@ -36,58 +36,48 @@ const DARK_COLORS = {
 
 const THEME_STORAGE_KEY = "setra-theme";
 
+// Full ThemeProvider implementation
 export function ThemeProvider({
   children
 }: {
   children: React.ReactNode;
 }): React.ReactElement {
-  const [theme, setTheme] = useState<ThemeMode>("dark");
-  const [hydrated, setHydrated] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>("light");
 
+  // Load theme from storage on mount
   useEffect(() => {
-    const loadPreference = async (): Promise<void> => {
+    (async () => {
       try {
-        let stored: string | null = null;
-        if (Platform.OS === "web" && typeof window !== "undefined") {
-          stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-        } else {
-          stored = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme === "dark" || savedTheme === "light") {
+          setTheme(savedTheme);
         }
-        if (stored === "light" || stored === "dark") {
-          setTheme(stored);
-        }
-      } catch (error) {
-        console.warn("Failed to load theme preference", error);
-      } finally {
-        setHydrated(true);
+      } catch (e) {
+        console.error("Failed to load theme", e);
       }
-    };
-    loadPreference().catch(() => setHydrated(true));
+    })();
   }, []);
 
-  useEffect(() => {
-    if (!hydrated) return;
-    const persist = async (): Promise<void> => {
-      try {
-        if (Platform.OS === "web" && typeof window !== "undefined") {
-          window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-        } else {
-          await AsyncStorage.setItem(THEME_STORAGE_KEY, theme);
-        }
-      } catch (error) {
-        console.warn("Failed to save theme preference", error);
-      }
-    };
-    persist().catch(() => null);
-  }, [theme, hydrated]);
+  const toggleTheme = async () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    try {
+      await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
+    } catch (e) {
+      console.error("Failed to save theme", e);
+    }
+  };
 
   const value = useMemo<ThemeContextValue>(() => {
     return {
       theme,
-      toggleTheme: () => setTheme((prev) => (prev === "dark" ? "light" : "dark")),
-      colors: theme === "dark" ? DARK_COLORS : LIGHT_COLORS
+      toggleTheme,
+      colors: theme === "light" ? LIGHT_COLORS : DARK_COLORS
     };
   }, [theme]);
+
+  // Force StatusBar update (optional but good practice)
+  // StatusBar.setBarStyle(theme === "light" ? "dark-content" : "light-content");
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

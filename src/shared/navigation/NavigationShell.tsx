@@ -48,7 +48,7 @@ function NavigationContent(): React.ReactElement {
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
   const pathname = usePathname();
-  const { colors, theme } = useTheme();
+  const { colors, theme, toggleTheme } = useTheme();
   const { user, loading: authLoading, signOut } = useAuth();
   const { drawerOpen, setDrawerOpen } = useDrawer();
   const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -75,195 +75,250 @@ function NavigationContent(): React.ReactElement {
     return <LoginScreen />;
   }
 
-  const renderNavItem = (item: NavItem) => {
-    const active = item.href === pathname;
+  // renderNavItem moved inside renderSidebar for theme access
 
-    if (item.comingSoon) {
-      return (
-        <View
-          key={item.href}
-          className="w-full flex-row items-center gap-4 px-6 py-4 rounded-2xl bg-slate-50/70 border border-slate-200/70 relative"
-        >
-          <View className="absolute left-0 w-1.5 h-6 bg-transparent rounded-full" />
-          <Ionicons name={item.icon as any} size={20} color="#94a3b8" />
-          <Text className="text-sm font-sans text-slate-400 flex-1">{item.label}</Text>
-          <View className="bg-white/90 border border-slate-200 px-2 py-0.5 rounded-full">
-            <Text className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
-              Coming Soon
-            </Text>
-          </View>
-        </View>
-      );
-    }
+  const renderSidebar = () => {
+    const sidebarBg = theme === 'dark' ? 'rgba(2, 6, 23, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+    const borderColor = theme === 'dark' ? 'border-white/10' : 'border-slate-100/50';
+    const textColor = theme === 'dark' ? 'text-white' : 'text-slate-800';
+    const subTextColor = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
 
     return (
-      <Link
-        key={item.href}
-        href={item.href}
-        asChild
-        onPress={() => setDrawerOpen(false)}
-      >
-        <Pressable
-          className={`w-full flex-row items-center gap-4 px-6 py-4 rounded-2xl transition-all relative ${active
-            ? "bg-white/80 shadow-sm"
-            : "hover:bg-emerald-50/50"
-            }`}
-        >
-          {active && (
-            <View className="absolute left-0 w-1.5 h-6 bg-emerald-500 rounded-full" />
-          )}
-          <Ionicons
-            name={item.icon as any}
-            size={20}
-            color={active ? "#10b981" : "#64748b"}
-          />
-          <Text
-            className={`text-sm ${active ? "font-bold text-emerald-600" : "text-slate-500"}`}
-          >
-            {item.label}
-          </Text>
-        </Pressable>
-      </Link>
-    );
-  };
-
-  const renderSidebar = () => (
-    <View
-      className="h-full bg-white/70 backdrop-blur-3xl border-r border-white/40 flex-col"
-      style={{
-        width: isDesktop ? 288 : "100%",
-      }}
-    >
-      {/* Logo */}
-      <View className="flex-row items-center gap-3 p-8 pb-0">
-        <View className="w-10 h-10 bg-emerald-500 rounded-xl items-center justify-center">
-          <Ionicons name="school-outline" size={24} color="white" />
-        </View>
-        <Text className="text-2xl font-black tracking-tighter uppercase text-slate-800">
-          SETRA<Text className="text-emerald-500">.</Text>
-        </Text>
-        {!isDesktop && (
-          <Pressable
-            onPress={() => setDrawerOpen(false)}
-            className="ml-auto p-2 bg-slate-100 rounded-lg"
-          >
-            <Ionicons name="close" size={20} color="#64748b" />
-          </Pressable>
-        )}
-      </View>
-
-      {/* Navigation - Scrollable */}
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{
-          padding: 32,
-          paddingTop: 48,
-          paddingBottom: 16,
+      <View
+        className={`h-full flex-col backdrop-blur-xl border-r ${borderColor}`}
+        style={{
+          width: isDesktop ? 288 : "100%",
+          backgroundColor: sidebarBg,
         }}
-        showsVerticalScrollIndicator={false}
       >
-        {/* Navigation */}
-        <View className="space-y-2">
-          {/* Main Items */}
-          {NAV_ITEMS.map(renderNavItem)}
-
-          {/* Program Section */}
-          <View className="pt-4 pb-2">
-            <Text className="px-6 text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-4">
-              Materi & Program
-            </Text>
-            <View className="space-y-2">
-              {PROGRAM_ITEMS.map(renderNavItem)}
-            </View>
+        {/* Logo */}
+        <View className="flex-row items-center gap-3 p-8 pb-0">
+          <View className="w-10 h-10 bg-emerald-500 rounded-xl items-center justify-center">
+            <Ionicons name="school-outline" size={24} color="white" />
           </View>
+          <Text className={`text-2xl font-black tracking-tighter uppercase ${textColor}`}>
+            SETRA<Text className="text-emerald-500">.</Text>
+          </Text>
+          {!isDesktop && (
+            <Pressable
+              onPress={() => setDrawerOpen(false)}
+              className={`ml-auto p-2 rounded-lg ${theme === 'dark' ? 'bg-white/10' : 'bg-slate-100'}`}
+            >
+              <Ionicons name="close" size={20} color={theme === 'dark' ? '#94a3b8' : '#64748b'} />
+            </Pressable>
+          )}
         </View>
-      </ScrollView>
 
-      {/* User Profile Footer - Fixed at Bottom */}
-      <View className="p-8 pt-4" style={{ paddingBottom: isDesktop ? 32 : 96 }}>
-        <Pressable
-          onPress={() => setProfileModalOpen(true)}
-          className="w-full p-4 bg-emerald-50/50 rounded-3xl border border-emerald-100 flex-row items-center gap-3"
+        {/* Navigation - Scrollable */}
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{
+            padding: 32,
+            paddingTop: 48,
+            paddingBottom: 16,
+          }}
+          showsVerticalScrollIndicator={false}
         >
-          <View className="w-10 h-10 rounded-full bg-white items-center justify-center border border-white shadow-sm">
-            <Ionicons name="person" size={20} color="#10b981" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-sm font-bold text-slate-900" numberOfLines={1}>
-              {user.displayName || "Guest Trader"}
-            </Text>
-            <Text className="text-xs text-slate-500 capitalize">
-              User
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={16} color="#94a3b8" />
-        </Pressable>
-      </View>
-
-      {/* Profile Modal - Inside Sidebar */}
-      {profileModalOpen && (
-        <>
-          <Pressable
-            className="absolute inset-0 bg-black/40 z-40"
-            onPress={() => setProfileModalOpen(false)}
-          />
-          <View
-            className="absolute bottom-0 left-0 right-0 items-center justify-end p-4 z-50"
-            style={{ paddingBottom: isDesktop ? 32 : 96 }}
-          >
-            <View className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border border-white/80 p-6 md:p-8 relative">
-              <Pressable
-                onPress={() => setProfileModalOpen(false)}
-                className="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-white border border-slate-200 items-center justify-center shadow-md"
-              >
-                <Ionicons name="close" size={16} color="#64748b" />
-              </Pressable>
-
-              {/* Profile Header */}
-              <View className="flex-row items-center gap-3 mb-6">
-                <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center">
-                  <Ionicons name="person" size={20} color="#10b981" />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-semibold text-slate-900">
-                    Profile Saya
-                  </Text>
-                  <Text className="text-xs text-slate-500" numberOfLines={1}>
-                    {user.displayName || "user@setra.com"}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Actions */}
-              <View className="space-y-3">
-                <Link href="/profile" asChild onPress={() => setProfileModalOpen(false)}>
-                  <Pressable className="flex-row items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-slate-200 active:bg-emerald-50/50">
-                    <Text className="text-sm font-semibold text-slate-700">
-                      Edit Profile
+          {/* Navigation */}
+          <View className="space-y-2">
+            {/* Main Items */}
+            {NAV_ITEMS.map((item) => {
+              const active = item.href === pathname;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  asChild
+                  onPress={() => setDrawerOpen(false)}
+                >
+                  <Pressable
+                    className={`w-full flex-row items-center gap-4 px-6 py-4 rounded-2xl transition-all relative ${active
+                      ? (theme === 'dark' ? "bg-white/10 shadow-sm" : "bg-white/80 shadow-sm")
+                      : "hover:bg-emerald-50/50"
+                      }`}
+                  >
+                    {active && (
+                      <View className="absolute left-0 w-1.5 h-6 bg-emerald-500 rounded-full" />
+                    )}
+                    <Ionicons
+                      name={item.icon as any}
+                      size={20}
+                      color={active ? "#10b981" : (theme === 'dark' ? "#94a3b8" : "#64748b")}
+                    />
+                    <Text
+                      className={`text-sm ${active ? "font-bold text-emerald-500" : (theme === 'dark' ? "text-slate-400" : "text-slate-500")}`}
+                    >
+                      {item.label}
                     </Text>
-                    <Ionicons name="arrow-forward" size={16} color="#94a3b8" />
                   </Pressable>
                 </Link>
+              );
+            })}
 
-                <View className="pt-2">
-                  <Pressable
-                    onPress={() => {
-                      setProfileModalOpen(false);
-                      signOut();
-                    }}
-                    className="w-full flex-row items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-slate-900 active:bg-slate-800"
-                  >
-                    <Ionicons name="log-out-outline" size={16} color="white" />
-                    <Text className="text-white font-semibold">Logout</Text>
-                  </Pressable>
-                </View>
+            {/* Program Section */}
+            <View className="pt-4 pb-2">
+              <Text className="px-6 text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-4">
+                Materi & Program
+              </Text>
+              <View className="space-y-2">
+                {PROGRAM_ITEMS.map((item) => {
+                  const active = item.href === pathname;
+                  if (item.comingSoon) {
+                    return (
+                      <View
+                        key={item.href}
+                        className={`w-full flex-row items-center gap-4 px-6 py-4 rounded-2xl border relative ${theme === 'dark' ? 'bg-slate-800/50 border-white/5' : 'bg-slate-50/70 border-slate-200/70'}`}
+                      >
+                        <View className="absolute left-0 w-1.5 h-6 bg-transparent rounded-full" />
+                        <Ionicons name={item.icon as any} size={20} color="#94a3b8" />
+                        <Text className="text-sm font-sans text-slate-400 flex-1">{item.label}</Text>
+                        <View className={`border px-2 py-0.5 rounded-full ${theme === 'dark' ? 'bg-slate-700 border-slate-600' : 'bg-white/90 border-slate-200'}`}>
+                          <Text className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                            Soon
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      asChild
+                      onPress={() => setDrawerOpen(false)}
+                    >
+                      <Pressable
+                        className={`w-full flex-row items-center gap-4 px-6 py-4 rounded-2xl transition-all relative ${active
+                          ? (theme === 'dark' ? "bg-white/10 shadow-sm" : "bg-white/80 shadow-sm")
+                          : "hover:bg-emerald-50/50"
+                          }`}
+                      >
+                        {active && (
+                          <View className="absolute left-0 w-1.5 h-6 bg-emerald-500 rounded-full" />
+                        )}
+                        <Ionicons
+                          name={item.icon as any}
+                          size={20}
+                          color={active ? "#10b981" : (theme === 'dark' ? "#94a3b8" : "#64748b")}
+                        />
+                        <Text
+                          className={`text-sm ${active ? "font-bold text-emerald-500" : (theme === 'dark' ? "text-slate-400" : "text-slate-500")}`}
+                        >
+                          {item.label}
+                        </Text>
+                      </Pressable>
+                    </Link>
+                  );
+                })}
               </View>
             </View>
           </View>
-        </>
-      )}
-    </View>
-  );
+        </ScrollView>
+
+        {/* User Profile Footer - Fixed at Bottom */}
+        <View className="px-8 pt-0 pb-8" style={{ paddingBottom: isDesktop ? 32 : 96 }}>
+          {/* Theme Toggle */}
+          <View className={`flex-row p-1 rounded-xl mb-4 ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-100'}`}>
+            <Pressable
+              onPress={() => theme === 'dark' && toggleTheme()}
+              className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-lg ${theme === 'light' ? 'bg-white shadow-sm' : ''}`}
+            >
+              <Ionicons name="sunny" size={16} color={theme === 'light' ? '#f59e0b' : '#94a3b8'} />
+              <Text className={`text-xs font-bold ${theme === 'light' ? 'text-slate-800' : 'text-slate-500'}`}>Light</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => theme === 'light' && toggleTheme()}
+              className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-lg ${theme === 'dark' ? 'bg-slate-800 shadow-sm' : ''}`}
+            >
+              <Ionicons name="moon" size={16} color={theme === 'dark' ? '#facc15' : '#94a3b8'} />
+              <Text className={`text-xs font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-500'}`}>Dark</Text>
+            </Pressable>
+          </View>
+
+          <Pressable
+            onPress={() => setProfileModalOpen(true)}
+            className={`w-full p-4 rounded-3xl border flex-row items-center gap-3 ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-emerald-50/50 border-emerald-100'}`}
+          >
+            <View className={`w-10 h-10 rounded-full items-center justify-center border shadow-sm ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-white'}`}>
+              <Ionicons name="person" size={20} color="#10b981" />
+            </View>
+            <View className="flex-1">
+              <Text className={`text-sm font-bold ${textColor}`} numberOfLines={1}>
+                {user.displayName || "Guest Trader"}
+              </Text>
+              <Text className="text-xs text-slate-500 capitalize">
+                User
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#94a3b8" />
+          </Pressable>
+        </View>
+
+        {/* Profile Modal - Inside Sidebar */}
+        {profileModalOpen && (
+          <>
+            <Pressable
+              className="absolute inset-0 bg-black/40 z-40"
+              onPress={() => setProfileModalOpen(false)}
+            />
+            <View
+              className="absolute bottom-0 left-0 right-0 items-center justify-end p-4 z-50"
+              style={{ paddingBottom: isDesktop ? 32 : 96 }}
+            >
+              <View className={`w-full max-w-sm rounded-3xl shadow-2xl border p-6 md:p-8 relative ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-white/80'}`}>
+                <Pressable
+                  onPress={() => setProfileModalOpen(false)}
+                  className={`absolute -top-4 -right-4 w-10 h-10 rounded-full border items-center justify-center shadow-md ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}
+                >
+                  <Ionicons name="close" size={16} color="#64748b" />
+                </Pressable>
+
+                {/* Profile Header */}
+                <View className="flex-row items-center gap-3 mb-6">
+                  <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center">
+                    <Ionicons name="person" size={20} color="#10b981" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className={`text-sm font-semibold ${textColor}`}>
+                      Profile Saya
+                    </Text>
+                    <Text className="text-xs text-slate-500" numberOfLines={1}>
+                      {user.displayName || "user@setra.com"}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Actions */}
+                <View className="space-y-3">
+                  <Link href="/profile" asChild onPress={() => setProfileModalOpen(false)}>
+                    <Pressable className={`flex-row items-center justify-between gap-3 px-4 py-3 rounded-2xl border active:bg-emerald-50/50 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
+                      <Text className={`text-sm font-semibold ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
+                        Edit Profile
+                      </Text>
+                      <Ionicons name="arrow-forward" size={16} color="#94a3b8" />
+                    </Pressable>
+                  </Link>
+
+                  <View className="pt-2">
+                    <Pressable
+                      onPress={() => {
+                        setProfileModalOpen(false);
+                        signOut();
+                      }}
+                      className="w-full flex-row items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-slate-900 active:bg-slate-800"
+                    >
+                      <Ionicons name="log-out-outline" size={16} color="white" />
+                      <Text className="text-white font-semibold">Logout</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </>
+        )}
+      </View>
+    );
+  };
 
   return (
     <View
@@ -276,23 +331,8 @@ function NavigationContent(): React.ReactElement {
       {/* Desktop Sidebar */}
       {isDesktop && renderSidebar()}
 
-      {/* Mobile Header */}
-      {!isDesktop && (
-        <View className="flex-row justify-between items-center px-4 py-3.5 bg-white/70 backdrop-blur-sm border-b border-white/40">
-          <Pressable
-            onPress={() => setDrawerOpen(true)}
-            className="flex-row items-center gap-2"
-          >
-            <Ionicons name="menu" size={24} color="#0f172a" />
-            <Text className="font-black text-xl tracking-tighter">SETRA</Text>
-          </Pressable>
-          <Pressable onPress={() => setProfileModalOpen(true)}>
-            <View className="w-8 h-8 rounded-full bg-emerald-500 items-center justify-center">
-              <Ionicons name="person" size={16} color="white" />
-            </View>
-          </Pressable>
-        </View>
-      )}
+      {/* Mobile Header Removed - Sidebar accessed via Bottom Nav */}
+      {!isDesktop && null}
 
       {/* Mobile Drawer */}
       {!isDesktop && drawerOpen && (
@@ -336,18 +376,25 @@ function NavigationContent(): React.ReactElement {
           </View>
         )}
 
-        <ScrollView
-          className="flex-1"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: isDesktop ? 0 : 100 // Add padding for bottom nav on mobile
-          }}
-        >
-          <Slot />
+        {/* Container that conditionally handles scrolling */}
+        {pathname === "/modules" ? (
+          <View className="flex-1">
+            <Slot />
+          </View>
+        ) : (
+          <ScrollView
+            className="flex-1"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: isDesktop ? 0 : 100 // Add padding for bottom nav on mobile
+            }}
+          >
+            <Slot />
 
-          {/* Global Footer */}
-          <Footer />
-        </ScrollView>
+            {/* Global Footer */}
+            <Footer />
+          </ScrollView>
+        )}
 
         {/* Global Bottom Navigation for Mobile */}
         {!isDesktop && <BottomNav />}

@@ -71,9 +71,9 @@ export default function CommunityChatScreen(): React.ReactElement {
       )}
 
       {/* Main Container */}
-      <View className="flex-1 mx-0 md:mx-6 mb-0 md:mb-6">
+      <View className="flex-1 mx-0 md:mx-4 lg:mx-8 mb-0 md:mb-4 lg:mb-6">
         <View
-          className="flex-1 bg-white/60 md:backdrop-blur-2xl md:border md:border-white/60 md:rounded-[40px] overflow-hidden"
+          className="flex-1 bg-white/60 md:backdrop-blur-2xl md:border md:border-white/60 md:rounded-[32px] lg:rounded-[40px] overflow-hidden"
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 20 },
@@ -149,7 +149,7 @@ export default function CommunityChatScreen(): React.ReactElement {
                   />
 
                   <View className="p-6 md:p-10">
-                    <View className={`${isLargeScreen ? "flex-row" : "flex-col"} gap-10`}>
+                    <View className={`${isLargeScreen ? "flex-row" : "flex-col"} gap-16 md:gap-10`}>
                       {/* Left Side - Benefits */}
                       <View className="flex-1">
                         <View className="mb-8">
@@ -185,9 +185,9 @@ export default function CommunityChatScreen(): React.ReactElement {
                           <Text className="text-xs font-bold text-slate-500 uppercase mb-3 tracking-wider">
                             Edukasi & Komunitas
                           </Text>
-                          <View className={`grid ${isLargeScreen ? "grid-cols-2" : "grid-cols-1"} gap-3`}>
+                          <View className={`flex-row flex-wrap gap-3`}>
                             {benefitsEducation.map((benefit, index) => (
-                              <View key={index} className="flex-row items-center gap-2 mb-2">
+                              <View key={index} className={`flex-row items-center gap-2 mb-2 ${isLargeScreen ? "w-[48%]" : "w-full"}`}>
                                 <Ionicons name={benefit.icon as any} size={16} color="#10b981" />
                                 <Text className="text-sm text-slate-600">{benefit.label}</Text>
                               </View>
@@ -197,7 +197,7 @@ export default function CommunityChatScreen(): React.ReactElement {
                       </View>
 
                       {/* Right Side - CTA */}
-                      <View className="flex-1 items-center justify-center bg-slate-50/70 rounded-[32px] p-6 md:p-8 border border-white/60">
+                      <View className="flex-1 items-center justify-center bg-slate-50/70 rounded-[32px] p-6 md:p-8 border border-white/60 mt-4 md:mt-0">
                         {/* Loyalty Badges */}
                         <View className="mb-8">
                           <Text className="text-xs font-bold text-slate-400 uppercase mb-3 text-center">
@@ -298,7 +298,7 @@ export default function CommunityChatScreen(): React.ReactElement {
                           className="w-full max-w-sm"
                         >
                           <View
-                            className="bg-red-600 rounded-xl py-3.5 md:py-4 items-center active:opacity-80"
+                            className="bg-red-600 rounded-xl py-3 md:py-4 px-4 items-center justify-center active:opacity-80"
                             style={{
                               shadowColor: "#dc2626",
                               shadowOffset: { width: 0, height: 4 },
@@ -307,16 +307,16 @@ export default function CommunityChatScreen(): React.ReactElement {
                               elevation: 8,
                             }}
                           >
-                            <View className="flex-row items-center gap-2 md:gap-3">
-                              <Ionicons name="logo-youtube" size={24} color="white" />
-                              <Text className="text-white font-bold text-base md:text-lg">
+                            <View className="flex-row items-center justify-center gap-2 md:gap-3">
+                              <Ionicons name="logo-youtube" size={24} color="white" style={{ flexShrink: 0 }} />
+                              <Text className="text-white font-bold text-sm md:text-lg text-center flex-shrink">
                                 Gabung Membership Sekarang
                               </Text>
                             </View>
                           </View>
                         </Pressable>
 
-                        <Text className="text-[10px] text-slate-400 mt-4 text-center">
+                        <Text className="text-[10px] text-slate-400 mt-4 text-center px-4">
                           Anda akan diarahkan ke halaman YouTube Membership resmi.
                         </Text>
                       </View>
