@@ -1,20 +1,19 @@
+import { useDrawer } from "@/shared/context/DrawerContext";
+import { useAuth } from "@/shared/providers/AuthProvider";
+import { useTheme } from "@/shared/providers/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    View,
-    Text,
-    ScrollView,
-    TextInput,
-    Pressable,
     Image,
+    Pressable,
+    ScrollView,
+    Text,
+    TextInput,
     useWindowDimensions,
-    Platform
+    View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/shared/providers/ThemeProvider";
-import { useAuth } from "@/shared/providers/AuthProvider";
-import { useRouter } from "expo-router";
-import { useDrawer } from "@/shared/context/DrawerContext";
 
 export default function ProfileScreen() {
     const { colors, theme } = useTheme();
@@ -59,9 +58,11 @@ export default function ProfileScreen() {
             {!isDesktop && (
                 <View className="px-4 py-3 flex-row justify-between items-center bg-white/70 backdrop-blur-sm border-b border-white/40 sticky top-0 z-10">
                     <Pressable onPress={() => setDrawerOpen(true)} className="flex-row items-center gap-2">
-                        <View className="w-8 h-8 bg-emerald-500 rounded-lg items-center justify-center">
-                            <Ionicons name="school-outline" size={18} color="white" />
-                        </View>
+                        <Image
+                            source={require("../../../../assets/images/LogoST.png")}
+                            style={{ width: 32, height: 32 }}
+                            resizeMode="contain"
+                        />
                         <Text className="font-black text-xl tracking-tighter text-slate-800">SETRA.</Text>
                     </Pressable>
                     <View className="w-8 h-8" />

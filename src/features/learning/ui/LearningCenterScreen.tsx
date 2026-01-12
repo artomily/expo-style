@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
+import type { TradingModule } from "@/features/learning/constants/tradingModules";
+import { TRADING_MODULES } from "@/features/learning/constants/tradingModules";
+import Footer from "@/shared/components/Footer";
+import { useDrawer } from "@/shared/context/DrawerContext";
+import { useTheme } from "@/shared/providers/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
+  Image,
   Pressable,
   ScrollView,
+  Text,
   useWindowDimensions,
-  Platform
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, Feather } from "@expo/vector-icons";
-import { TRADING_MODULES } from "@/features/learning/constants/tradingModules";
-import type { TradingModule } from "@/features/learning/constants/tradingModules";
-import { useTheme } from "@/shared/providers/ThemeProvider";
-import { useRouter } from "expo-router";
-import { useDrawer } from "@/shared/context/DrawerContext";
-import Footer from "@/shared/components/Footer";
 
 
 type ViewMode = "list" | "player";
@@ -88,12 +88,14 @@ export default function LearningCenterScreen(): React.ReactElement {
           {/* Mobile Header */}
           {!isLargeScreen && (
             <View className="p-4 flex-row justify-between items-center bg-white/40 backdrop-blur-sm border-b border-white/20">
-              <View className="flex-row items-center gap-2">
-                <View className="w-8 h-8 bg-emerald-500 rounded-lg items-center justify-center">
-                  <Text className="text-white font-black text-sm">ST</Text>
-                </View>
+              <Pressable onPress={() => setDrawerOpen(true)} className="flex-row items-center gap-2">
+                <Image
+                  source={require("../../../../assets/images/LogoST.png")}
+                  style={{ width: 32, height: 32 }}
+                  resizeMode="contain"
+                />
                 <Text className="font-black text-xl tracking-tighter">SETRA</Text>
-              </View>
+              </Pressable>
             </View>
           )}
 

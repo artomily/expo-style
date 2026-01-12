@@ -1,22 +1,25 @@
+import { useDrawer } from "@/shared/context/DrawerContext";
+import { useTheme } from "@/shared/providers/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  useWindowDimensions,
-  Linking,
+    Image,
+    Linking,
+    Pressable,
+    ScrollView,
+    Text,
+    useWindowDimensions,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, Feather } from "@expo/vector-icons";
-import { useTheme } from "@/shared/providers/ThemeProvider";
-import { useRouter } from "expo-router";
 
 export default function CommunityChatScreen(): React.ReactElement {
   const { width } = useWindowDimensions();
   const isLargeScreen = width >= 768;
   const { colors } = useTheme();
   const router = useRouter();
+  const { setDrawerOpen } = useDrawer();
   const [activeTab, setActiveTab] = React.useState("community");
 
   const handleJoinMembership = () => {
@@ -51,12 +54,14 @@ export default function CommunityChatScreen(): React.ReactElement {
       {/* Mobile Header */}
       {!isLargeScreen && (
         <View className="p-4 flex-row justify-between items-center bg-white/40 backdrop-blur-sm border-b border-white/20">
-          <View className="flex-row items-center gap-2">
-            <View className="w-8 h-8 bg-red-500 rounded-lg items-center justify-center">
-              <Text className="text-white font-black text-sm">ST</Text>
-            </View>
+          <Pressable onPress={() => setDrawerOpen(true)} className="flex-row items-center gap-2">
+            <Image
+              source={require("../../../../assets/images/LogoST.png")}
+              style={{ width: 32, height: 32 }}
+              resizeMode="contain"
+            />
             <Text className="font-black text-xl tracking-tighter">SETRA</Text>
-          </View>
+          </Pressable>
         </View>
       )}
 

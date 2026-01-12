@@ -1,15 +1,17 @@
+import { useDrawer } from "@/shared/context/DrawerContext";
+import { useTheme } from "@/shared/providers/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  useWindowDimensions,
-  TextInput,
+    Image,
+    Pressable,
+    ScrollView,
+    Text,
+    TextInput,
+    useWindowDimensions,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/shared/providers/ThemeProvider";
 
 // Mock data - replace with actual API calls
 const MOCK_USER = {
@@ -46,6 +48,7 @@ export default function CapitalDashboardScreen(): React.ReactElement {
   const { width } = useWindowDimensions();
   const isLargeScreen = width >= 768;
   const { colors } = useTheme();
+  const { setDrawerOpen } = useDrawer();
 
   const [userData] = useState(MOCK_USER);
   const [accountData] = useState(MOCK_ACCOUNT);
@@ -520,12 +523,14 @@ export default function CapitalDashboardScreen(): React.ReactElement {
       {/* Mobile Header */}
       {!isLargeScreen && (
         <View className="p-4 flex-row justify-between items-center bg-white/40 backdrop-blur-sm border-b border-white/20">
-          <View className="flex-row items-center gap-2">
-            <View className="w-8 h-8 bg-emerald-500 rounded-lg items-center justify-center">
-              <Text className="text-white font-black text-sm">ST</Text>
-            </View>
+          <Pressable onPress={() => setDrawerOpen(true)} className="flex-row items-center gap-2">
+            <Image
+              source={require("../../../../assets/images/LogoST.png")}
+              style={{ width: 32, height: 32 }}
+              resizeMode="contain"
+            />
             <Text className="font-black text-xl tracking-tighter">SETRA</Text>
-          </View>
+          </Pressable>
         </View>
       )}
 

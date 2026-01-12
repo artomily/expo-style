@@ -1,21 +1,22 @@
+import LoginScreen from "@/features/auth/ui/LoginScreen";
+import BottomNav from "@/shared/components/BottomNav";
+import Footer from "@/shared/components/Footer";
+import { DrawerProvider, useDrawer } from "@/shared/context/DrawerContext";
+import { useAuth } from "@/shared/providers/AuthProvider";
+import { useTheme } from "@/shared/providers/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { Link, Slot, usePathname } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
+  ScrollView,
   Text,
   View,
   useWindowDimensions,
-  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Link, Slot, usePathname } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/shared/providers/ThemeProvider";
-import { useAuth } from "@/shared/providers/AuthProvider";
-import BottomNav from "@/shared/components/BottomNav";
-import LoginScreen from "@/features/auth/ui/LoginScreen";
-import Footer from "@/shared/components/Footer";
-import { DrawerProvider, useDrawer } from "@/shared/context/DrawerContext";
 
 interface NavItem {
   label: string;
@@ -93,9 +94,11 @@ function NavigationContent(): React.ReactElement {
       >
         {/* Logo */}
         <View className="flex-row items-center gap-3 p-8 pb-0">
-          <View className="w-10 h-10 bg-emerald-500 rounded-xl items-center justify-center">
-            <Ionicons name="school-outline" size={24} color="white" />
-          </View>
+          <Image
+            source={require("../../../assets/images/LogoST.png")}
+            style={{ width: 40, height: 40 }}
+            resizeMode="contain"
+          />
           <Text className={`text-2xl font-black tracking-tighter uppercase ${textColor}`}>
             SETRA<Text className="text-emerald-500">.</Text>
           </Text>

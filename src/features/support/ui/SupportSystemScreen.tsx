@@ -1,33 +1,35 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-  useWindowDimensions
-} from "react-native";
-import {
-  addDoc,
-  arrayUnion,
-  collection,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc
-} from "firebase/firestore";
-import { Timestamp } from "firebase/firestore";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Linking } from "react-native";
-import { db, appId } from "@/shared/api/firebase";
+import { appId, db } from "@/shared/api/firebase";
+import { useDrawer } from "@/shared/context/DrawerContext";
 import { useAuth } from "@/shared/providers/AuthProvider";
-import type { UserRole } from "@/shared/types/app";
 import { useTheme } from "@/shared/providers/ThemeProvider";
+import type { UserRole } from "@/shared/types/app";
+import {
+    Timestamp,
+    addDoc,
+    arrayUnion,
+    collection,
+    doc,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    updateDoc
+} from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
+import {
+    ActivityIndicator,
+    Image,
+    KeyboardAvoidingView,
+    Linking,
+    Platform,
+    Pressable,
+    ScrollView,
+    Text,
+    TextInput,
+    View,
+    useWindowDimensions,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type TicketStatus = "open" | "replied" | string;
 
@@ -103,6 +105,7 @@ export default function SupportSystemScreen(): React.ReactElement | null {
   const { width } = useWindowDimensions();
   const isDesktop = width >= 900;
   const isTablet = width >= 768;
+  const { setDrawerOpen } = useDrawer();
 
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
@@ -221,6 +224,19 @@ export default function SupportSystemScreen(): React.ReactElement | null {
 
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
+      {/* Mobile Header */}
+      {!isDesktop && (
+        <View className="p-4 flex-row justify-between items-center bg-white/40 backdrop-blur-sm border-b border-white/20" style={{ backgroundColor: colors.surface }}>
+          <Pressable onPress={() => setDrawerOpen(true)} className="flex-row items-center gap-2">
+            <Image
+              source={require("../../../../assets/images/LogoST.png")}
+              style={{ width: 32, height: 32 }}
+              resizeMode="contain"
+            />
+            <Text className="font-black text-xl tracking-tighter" style={{ color: colors.text }}>SETRA</Text>
+          </Pressable>
+        </View>
+      )}
       <View
         className="flex-row flex-wrap gap-3 px-4 pt-3 pb-1"
         style={{ marginBottom: isDesktop ? 12 : 4 }}

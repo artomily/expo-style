@@ -1,32 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-  useWindowDimensions
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  addDoc,
-  collection,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  Timestamp
-} from "firebase/firestore";
-import { db, appId } from "@/shared/api/firebase";
+    ANALYSIS_CHANNELS,
+    type AnalysisChannel
+} from "@/features/analysis/constants/analysisChannels";
+import { appId, db } from "@/shared/api/firebase";
+import { useDrawer } from "@/shared/context/DrawerContext";
 import { useAuth } from "@/shared/providers/AuthProvider";
 import { useTheme } from "@/shared/providers/ThemeProvider";
 import {
-  ANALYSIS_CHANNELS,
-  type AnalysisChannel
-} from "@/features/analysis/constants/analysisChannels";
+    addDoc,
+    collection,
+    limit,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    Timestamp
+} from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
+import {
+    FlatList,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    Text,
+    TextInput,
+    useWindowDimensions,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface AnalysisMessage {
   id: string;
@@ -42,6 +44,7 @@ export default function AnalysisFeedScreen(): React.ReactElement | null {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 900;
+  const { setDrawerOpen } = useDrawer();
 
   const [activeChannel, setActiveChannel] = useState<AnalysisChannel>(ANALYSIS_CHANNELS[0]);
   const [messages, setMessages] = useState<AnalysisMessage[]>([]);
@@ -138,6 +141,19 @@ export default function AnalysisFeedScreen(): React.ReactElement | null {
 
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
+      {/* Mobile Header */}
+      {!isDesktop && (
+        <View className="p-4 flex-row justify-between items-center bg-white/40 backdrop-blur-sm border-b border-white/20" style={{ backgroundColor: colors.surface }}>
+          <Pressable onPress={() => setDrawerOpen(true)} className="flex-row items-center gap-2">
+            <Image
+              source={require("../../../../assets/images/LogoST.png")}
+              style={{ width: 32, height: 32 }}
+              resizeMode="contain"
+            />
+            <Text className="font-black text-xl tracking-tighter" style={{ color: colors.text }}>SETRA</Text>
+          </Pressable>
+        </View>
+      )}
       <View
         className="flex-1"
         style={{ flexDirection: isDesktop ? "row" : "column" }}

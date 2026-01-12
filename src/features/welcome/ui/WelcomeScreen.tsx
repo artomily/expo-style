@@ -1,20 +1,19 @@
+import { useDrawer } from "@/shared/context/DrawerContext";
+import { useTheme } from "@/shared/providers/ThemeProvider";
+import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
+    Dimensions,
+    Image,
+    Linking,
     Pressable,
     ScrollView,
     Text,
-    View,
-    Linking,
-    Platform,
-    Image,
-    Dimensions
+    View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { useTheme } from "@/shared/providers/ThemeProvider";
-import { Feather } from "@expo/vector-icons";
 import YoutubePlayer from "react-native-youtube-iframe/lib/commonjs/YoutubeIframe";
-import { useDrawer } from "@/shared/context/DrawerContext";
 
 const SUPPORT_WA = "https://wa.me/082143982238";
 const YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=3rrDQmn5FIA";
@@ -102,14 +101,14 @@ export default function WelcomeScreen(): React.ReactElement {
             {/* Mobile Header */}
             {!isLargeScreen && (
                 <View className="p-4 flex-row justify-between items-center bg-white/40 backdrop-blur-sm border-b border-white/20">
-                    <View className="flex-row items-center gap-2">
+                    <Pressable onPress={() => setDrawerOpen(true)} className="flex-row items-center gap-2">
                         <Image
-                            source={{ uri: 'https://via.placeholder.com/32' }}
-                            className="h-8 w-auto"
+                            source={require("../../../../assets/images/LogoST.png")}
                             style={{ width: 32, height: 32 }}
+                            resizeMode="contain"
                         />
                         <Text className="font-black text-xl tracking-tighter">SETRA</Text>
-                    </View>
+                    </Pressable>
                     <View className="w-8 h-8" />
                 </View>
             )}
